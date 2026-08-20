@@ -119,8 +119,9 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
 
 	req = get_non_batch_cache_req(ctrlr, cmd->addr);
 	if (!req) {
-		req = ERR_PTR(-ENOMEM);
-		goto unlock;
+        req = ERR_PTR(-ENOMEM);
+        goto unlock;
+  
 	}
 
 	req->addr = cmd->addr;
@@ -175,8 +176,6 @@ static int __rpmh_write(const struct device *dev, enum rpmh_state state,
 	}
 
 	if (state == RPMH_ACTIVE_ONLY_STATE) {
-		WARN_ON(irqs_disabled());
-
 		ch = rpmh_rsc_get_channel(ctrlr_to_drv(ctrlr));
 		if (ch < 0)
 			return ch;
@@ -206,6 +205,10 @@ static int __fill_rpmh_msg(struct rpmh_request *req, enum rpmh_state state,
 	return 0;
 }
 
+atomic_t rpmh_first_write = ATOMIC_INIT(1);
+atomic_t rpmh_write_num = ATOMIC_INIT(0);
+struct rpmh_request *rpm_msg_table;
+static DEFINE_SPINLOCK(rpmh_num_lock);
 /**
  * rpmh_write_async: Write a set of RPMH commands
  *

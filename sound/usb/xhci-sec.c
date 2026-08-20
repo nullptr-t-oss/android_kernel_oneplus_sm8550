@@ -250,6 +250,7 @@ int xhci_sec_event_ring_cleanup(struct usb_device *udev, struct xhci_ring *ring)
 			return 0;
 		}
 	}
+
 	spin_unlock_irqrestore(&xhci->lock, flags);
 	return 0;
 }

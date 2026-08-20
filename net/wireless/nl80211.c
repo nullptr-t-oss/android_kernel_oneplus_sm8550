@@ -19983,6 +19983,12 @@ int cfg80211_external_auth_request(struct net_device *dev,
 	if (!wdev->conn_owner_nlportid)
 		return -EINVAL;
 
+	if (!is_zero_ether_addr(params->tx_addr) &&
+	    !ether_addr_equal(params->tx_addr, wdev_address(wdev)) &&
+	    !wiphy_ext_feature_isset(&rdev->wiphy,
+				     NL80211_EXT_FEATURE_AUTH_TX_RANDOM_TA))
+		return -EINVAL;
+
 	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, gfp);
 	if (!msg)
 		return -ENOMEM;

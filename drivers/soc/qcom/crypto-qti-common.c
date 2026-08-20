@@ -414,7 +414,7 @@ int crypto_qti_keyslot_program(const struct ice_mmio_data *mmio_data,
 			       unsigned int slot,
 			       u8 data_unit_mask, int capid, int storage_type)
 {
-	int err = 0;
+	int err1 = 0, err2 = 0;
 
 	err = crypto_qti_program_key(mmio_data, key, slot,
 				data_unit_mask, capid, storage_type);
@@ -427,7 +427,7 @@ int crypto_qti_keyslot_program(const struct ice_mmio_data *mmio_data,
 		}
 	}
 
-	return err;
+	return err1;
 }
 EXPORT_SYMBOL(crypto_qti_keyslot_program);
 

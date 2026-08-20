@@ -340,6 +340,14 @@ enum fastrpc_init_flags {
 	FASTRPC_INIT_ATTACH_SENSORS  = 3,
 };
 
+/* FastRPC ioctl structure to set session related info */
+struct fastrpc_proc_sess_info {
+	uint32_t domain_id;  /* Set the remote subsystem, Domain ID of the session  */
+	uint32_t session_id; /* Unused, Set the Session ID on remote subsystem */
+	uint32_t pd_type;    /* Set the process type on remote subsystem */
+	uint32_t sharedcb;   /* Unused, Session can share context bank with other sessions */
+};
+
 enum fastrpc_invoke2_type {
 	FASTRPC_INVOKE2_ASYNC		   = 1,
 	FASTRPC_INVOKE2_ASYNC_RESPONSE = 2,
