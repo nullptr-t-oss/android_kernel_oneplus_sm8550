@@ -10,6 +10,7 @@
 #include <linux/delay.h>
 #include <linux/usb.h>
 #include <linux/skbuff.h>
+#include <linux/moduleparam.h>
 
 #include "mt7601u.h"
 #include "dma.h"
@@ -403,6 +404,18 @@ error:
 	return ret;
 }
 
+/*
+	patch - module prm - vnd_reset
+	Some mt7601u devices are unable to
+	respond after vendor_reset is called,
+	therefore adding this option to turn off
+	reset. Usually the dongle loads OK if
+	reset is bypassed
+*/
+
+static int vnd_reset = 0;	//	apply patch by default (dont reset)
+module_param(vnd_reset, int, 0660);
+
 static int mt7601u_load_firmware(struct mt7601u_dev *dev)
 {
 	const struct firmware *fw;
@@ -446,7 +459,9 @@ static int mt7601u_load_firmware(struct mt7601u_dev *dev)
 	mt7601u_wr(dev, 0x94c, 0);
 	mt7601u_wr(dev, MT_FCE_PSE_CTRL, 0);
 
-	mt7601u_vendor_reset(dev);
+	if (vnd_reset == 1)
+		mt7601u_vendor_reset(dev);
+
 	msleep(5);
 
 	mt7601u_wr(dev, 0xa44, 0);
