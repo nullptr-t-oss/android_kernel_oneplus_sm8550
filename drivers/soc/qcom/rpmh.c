@@ -205,10 +205,6 @@ static int __fill_rpmh_msg(struct rpmh_request *req, enum rpmh_state state,
 	return 0;
 }
 
-atomic_t rpmh_first_write = ATOMIC_INIT(1);
-atomic_t rpmh_write_num = ATOMIC_INIT(0);
-struct rpmh_request *rpm_msg_table;
-static DEFINE_SPINLOCK(rpmh_num_lock);
 /**
  * rpmh_write_async: Write a set of RPMH commands
  *
