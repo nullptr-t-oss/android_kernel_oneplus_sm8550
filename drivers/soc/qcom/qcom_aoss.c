@@ -19,6 +19,7 @@
 #include <linux/soc/qcom/qcom_aoss.h>
 #include <linux/ipc_logging.h>
 #include <linux/suspend.h>
+#include <linux/proc_fs.h>
 
 #define QMP_DESC_MAGIC			0x0
 #define QMP_DESC_VERSION		0x4
@@ -106,6 +107,7 @@ struct qmp {
 	struct dentry *debugfs_file;
 #endif /* CONFIG_DEBUG_FS */
 	bool ds_entry;
+	struct proc_dir_entry *proc_file;   //<<-- add proc file
 };
 
 struct qmp_pd {
