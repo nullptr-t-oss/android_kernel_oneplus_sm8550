@@ -2592,6 +2592,8 @@ static void ufs_qcom_advertise_quirks(struct ufs_hba *hba)
 
 	if (host->disable_lpm)
 		hba->quirks |= UFSHCD_QUIRK_BROKEN_AUTO_HIBERN8;
+	else
+		hba->quirks |= UFSHCI_QUIRK_SKIP_MANUAL_WB_FLUSH_CTRL;
 
 #if IS_ENABLED(CONFIG_SCSI_UFS_CRYPTO_QTI)
 	hba->quirks |= UFSHCD_QUIRK_CUSTOM_KEYSLOT_MANAGER;
@@ -2608,10 +2610,11 @@ static void ufs_qcom_set_caps(struct ufs_hba *hba)
 		UFSHCD_CAP_CLK_SCALING |
 		UFSHCD_CAP_WB_WITH_CLK_SCALING |
 		UFSHCD_CAP_AUTO_BKOPS_SUSPEND;
-		if (!host->disable_wb_support)
-			hba->caps |= UFSHCD_CAP_WB_EN;
 		hba->caps |= UFSHCD_CAP_AGGR_POWER_COLLAPSE;
 	}
+
+	if (!host->disable_wb_support)
+		hba->caps |= UFSHCD_CAP_WB_EN;
 
 	hba->caps &= ~UFSHCD_CAP_CLK_SCALING;
 	hba->caps |= UFSHCD_CAP_CRYPTO;
@@ -2743,7 +2746,7 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
 		break;
 	case POST_CHANGE:
 		if (!on) {
-			if (ufs_qcom_is_link_hibern8(hba)) {
+			if ((ufs_qcom_is_link_hibern8(hba)) || (ufs_qcom_is_link_off(hba))) {
 				ufs_qcom_phy_set_src_clk_h8_enter(phy);
 				/*
 				 * As XO is set to the source of lane clocks, hence
